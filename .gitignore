@@ -1,3 +1,9 @@
+# STS/Eclipse
+.classpath
+.project
+.settings/
+
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup

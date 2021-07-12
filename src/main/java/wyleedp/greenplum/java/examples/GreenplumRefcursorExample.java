@@ -33,23 +33,25 @@ public class GreenplumRefcursorExample {
 			st = con.createStatement();
 			rs = st.executeQuery("select version()");
 			
+			// Greenplum Version 정보출력
 			while(rs.next()) {
 				System.out.println("Greenplum Version : " + rs.getString(1));
 			}
 			
+			// 레프커서 실행
 			StringBuilder sqlBuilder = new StringBuilder();
 			sqlBuilder.append("SELECT * FROM public.ref_fun_test();");
 			sqlBuilder.append("FETCH ALL FROM refcursor_1;");
 			sqlBuilder.append("FETCH ALL FROM refcursor_2;");
 			sqlBuilder.append("FETCH ALL FROM refcursor_3;");
 
-			boolean hasMoreResultSets = st.execute(sqlBuilder.toString());
+			boolean isExecution = st.execute(sqlBuilder.toString());
 			
 			int sqlIndex = 0;
 			int columnWidth = 25;
 			String line = StringUtils.repeat("-", 75);
 			
-			while(hasMoreResultSets) {
+			while(isExecution) {
 				rs = st.getResultSet();
 				ResultSetMetaData metaData = rs.getMetaData();
 				int columnCount = metaData.getColumnCount();
@@ -83,14 +85,13 @@ public class GreenplumRefcursorExample {
 					System.out.println();
 				}
 				
-				boolean isMoreResults = st.getMoreResults();
-				if(isMoreResults) {
-					System.out.println();
-				}else {
+				System.out.println();
+				sqlIndex++;
+				
+				// 실행할 쿼리가 없으면 while 문을 빠져 나간다.
+				if(!st.getMoreResults()) {
 					break;
 				}
-				
-				sqlIndex++;
 			}
 			
 		} catch (Exception e) {
